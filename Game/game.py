@@ -1,6 +1,7 @@
 import pygame
 import pymunk
 import sqlite3
+import db_functions
 
 #Initiate pygame and show the window
 pygame.init()
@@ -70,3 +71,5 @@ def game():
 
 # Enter x into the table under the "score" column
 x = game()
+
+db_functions.insertData('Tester', x)
