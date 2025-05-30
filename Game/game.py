@@ -7,7 +7,6 @@ import sqlite3
 pygame.init()
 display = pygame.display.set_mode((800, 800))
 clock = pygame.time.Clock()
-draw_options = pymunk.pygame_util.DrawOptions(display)
 
 #Initialize pymunk space
 space = pymunk.Space()
@@ -19,14 +18,11 @@ FPS = 80
 
 
 body = pymunk.Body(1, 1111111)
-body.postition = 700, 400
+body.position = 200, 400
 shape = pymunk.Circle(body, 20)
-shape.friction = 1
-       
-space.add(body, shape)        
-        
+shape.friction = 1.0
 
-    
+space.add(body, shape)         
     
         
 def game():
@@ -42,15 +38,13 @@ def game():
                 if event.key == pygame.K_SPACE:
                     body.apply_impulse_at_local_point((0, -400))
                             
-        
+                
         display.fill((255, 255, 255))
-        space.debug_draw(draw_options)       
+        
+        pygame.draw.circle(display, (255, 0, 0), (body.position), 20)      
         pygame.display.flip()
         space.step(1/FPS)
-        clock.tick(FPS)
-
-        sc += 1
-        
+        clock.tick(FPS)        
         
 
 # Enter x into the table under the "score" column
