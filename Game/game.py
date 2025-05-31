@@ -27,24 +27,25 @@ space.add(body, shape)
 
 class Pilars():
     def __init__(self, x, space, display):
+        self.x = x
         self.display = display
         
         self.length = random.randint(100, 670)
         self.body = pymunk.Body(body_type=pymunk.Body.STATIC)
-        self.body.position = x, self.length/2
+        self.body.position = self.x, self.length/2
         self.shape = pymunk.Poly.create_box(self.body, (50, self.length))
         
-        self.length_second = 800 - (self.length + 60)
+        self.length_second = 800 - (self.length + 80)
         self.body_second = pymunk.Body(body_type=pymunk.Body.STATIC)
-        self.body_second.position = x, self.length + 60 + self.length_second/2
+        self.body_second.position = self.x, self.length + 80 + self.length_second/2
         self.shape_second = pymunk.Poly.create_box(self.body_second, (50, self.length_second))
         
         space.add(self.body, self.shape)
         space.add(self.body_second, self.shape_second)
         
     def draw(self):
-        rect_top = (self.body.position[0], self.body.position[1], 50, self.length)
-        rect_bottom = (self.body_second.position[0], self.body_second.position[1], 50, self.length_second)
+        rect_top = (self.x - 25, 0, 50, self.length)
+        rect_bottom = (self.x - 25, self.length + 80, 50, self.length_second)
         
         pygame.draw.rect(self.display, (0, 0, 255), rect_top)
         pygame.draw.rect(self.display, (0, 0, 255), rect_bottom)
@@ -71,6 +72,8 @@ def game():
         display.fill((255, 255, 255))
         
         pygame.draw.circle(display, (255, 0, 0), (body.position), 20)
+        pygame.draw.rect(display, (0, 255, 0), (0, 0, 50, 100))
+        
         pilars.draw()
               
         pygame.display.flip()
