@@ -7,7 +7,8 @@ def init_db():
 
     table = """ CREATE TABLE SCORE_TABLE (
                 playerName TEXT,
-                playerScore INTEGER
+                playerScore INTEGER,
+                playerLives INTEGER
             ); """
 
     cursor.execute(table)

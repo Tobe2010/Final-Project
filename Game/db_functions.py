@@ -3,20 +3,20 @@
 import sqlite3
 
 # inserts data for a new player or updates to the score for an already existing user (void)
-def insertData (playerName, playerScore):
+def insertData(playerName, playerScore):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
        
        if checkExists(playerName):
               setScoreForUser(playerName, playerScore)
        else:
-              cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore) VALUES (?, ?)', (playerName, playerScore))
+              cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore, playerLives) VALUES (?, ?, ?)', (playerName, playerScore, 0))
        
        conn.commit()
        conn.close()
       
 # prints every row in the database (void)
-def queryDB ():
+def queryDB():
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
        
@@ -27,7 +27,7 @@ def queryDB ():
        conn.close()
        
 # prints the score for a specific username (int)
-def queryScoreForUser (playerName):
+def queryScoreForUser(playerName):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
        
@@ -40,7 +40,7 @@ def queryScoreForUser (playerName):
        return i[0]
 
 # adds to the score for a specific username (void)
-def updateScoreForUser (playerName, newScore):
+def updateScoreForUser(playerName, newScore):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
        
@@ -50,7 +50,7 @@ def updateScoreForUser (playerName, newScore):
        conn.close()
 
 # sets the score for a specific username (void)
-def setScoreForUser (playerName, newScore):
+def setScoreForUser(playerName, newScore):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
        
@@ -74,3 +74,44 @@ def checkExists(playerName):
        conn.close()
        
        return (i != 0)
+
+def queryLivesForUser(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute("SELECT playerLives FROM SCORE_TABLE WHERE playerName = '" + playerName + "'")
+       
+       i = cursor.fetchone()
+       
+       conn.close()
+       
+       return i[0]
+
+def setLivesForUser(playerName, playerLives):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute('UPDATE SCORE_TABLE SET playerLives = ' + str(playerLives) + " WHERE playerName = '" + playerName + "'")
+       
+       conn.commit()
+       conn.close()
+
+def addLivesForUser(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute('UPDATE SCORE_TABLE SET playerLives = ' + str(1 + queryLivesForUser(playerName)) + " WHERE playerName = '" + playerName + "'")
+       
+       conn.commit()
+       conn.close()
+
+def subtractLifeForUser(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute('UPDATE SCORE_TABLE SET playerLives = ' + str(queryLivesForUser(playerName) - 1) + " WHERE playerName = '" + playerName + "'")
+
+       conn.commit()
+       conn.close()
+       if queryLivesForUser(playerName) < 0:
+              setLivesForUser(playerName, 0)
