@@ -20,6 +20,7 @@ FPS = 80
 body = pymunk.Body(1, 1111111)
 body.position = 200, 400
 shape = pymunk.Circle(body, 20)
+shape.collision_type = 1
 
 space.add(body, shape)         
 
@@ -32,14 +33,17 @@ class Pilars():
         self.length = random.randint(100, 670)
         self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body.position = self.x, self.length/2
-        self.shape = pymunk.Poly.create_box(self.body, (50, self.length))
-        self.body.velocity = -50, 0
+        self.shape = pymunk.Poly.create_box(self.body, (70, self.length))
+        self.shape.collision_type = 2
+        self.body.velocity = -100, 0
         
         self.length_second = 800 - (self.length + 100)
         self.body_second = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body_second.position = self.x, self.length + 100 + self.length_second/2
-        self.shape_second = pymunk.Poly.create_box(self.body_second, (50, self.length_second))
-        self.body_second.velocity = -50, 0
+        self.shape_second = pymunk.Poly.create_box(self.body_second, (70, self.length_second))
+        self.shape_second.collision_type = 2
+        self.body_second.velocity = -100, 0
+        
         
         space.add(self.body, self.shape)
         space.add(self.body_second, self.shape_second)
@@ -50,33 +54,38 @@ class Pilars():
         self.length = random.randint(100, 670)
         self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body.position = self.x, self.length/2
-        self.shape = pymunk.Poly.create_box(self.body, (50, self.length))
-        self.body.velocity = -50, 0
+        self.shape = pymunk.Poly.create_box(self.body, (70, self.length))
+        self.shape.collision_type = 2
+        self.body.velocity = -100, 0
         
         self.length_second = 800 - (self.length + 100)
         self.body_second = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body_second.position = self.x, self.length + 100 + self.length_second/2
-        self.shape_second = pymunk.Poly.create_box(self.body_second, (50, self.length_second))
-        self.body_second.velocity = -50, 0
+        self.shape_second = pymunk.Poly.create_box(self.body_second, (70, self.length_second))
+        self.shape_second.collision_type = 2
+        self.body_second.velocity = -100, 0
         
         space.add(self.body, self.shape)
         space.add(self.body_second, self.shape_second)
         
     def draw(self):
-        rect_top = (self.body.position[0] - 25, 0, 50, self.length)
-        rect_bottom = (self.body_second.position[0] - 25, self.length + 100, 50, self.length_second)
+        rect_top = (self.body.position[0] - 25, 0, 70, self.length)
+        rect_bottom = (self.body_second.position[0] - 25, self.length + 100, 70, self.length_second)
         
         pygame.draw.rect(self.display, (0, 0, 255), rect_top)
         pygame.draw.rect(self.display, (0, 0, 255), rect_bottom)
         
         #Redo the cycle
-        if self.body.position[0] < -50:
-            self.set_new_position(850)
+        if self.body.position[0] < -70:
+            self.set_new_position(900)
+            
+def on_collide(arbiter, space, data):
+    return True
+
         
 pilars = Pilars(400, space, display)
 pilars_two = Pilars(700, space, display)
 pilars_three = Pilars(1000, space, display)
-pilars_four = Pilars(1300, space, display)
         
 def game():
     sc = 0
@@ -90,7 +99,8 @@ def game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     body.apply_impulse_at_local_point((0, -400))
-                            
+                    
+
                 
         display.fill((255, 255, 255))
         
@@ -99,7 +109,25 @@ def game():
         pilars.draw()
         pilars_two.draw()
         pilars_three.draw()
-        pilars_four.draw()
+        
+        
+        #print(shape.shapes_collide(pilars.shape).points)
+        
+        #if len(shape.shapes_collide(pilars.shape).points) > 0:
+        #    return sc
+        
+        #if len(shape.shapes_collide(pilars_two.shape).points) > 0:
+         #   return sc
+        
+        #if len(shape.shapes_collide(pilars_three.shape).points) > 0:
+        #    return sc
+        
+        #if len(shape.shapes_collide(pilars_four.shape).points) > 0:
+        #    return sc                    
+        
+        if body.position[1] > 780 or body.position[1] < 20:
+            return sc
+        
               
         pygame.display.flip()
         space.step(1/FPS)
