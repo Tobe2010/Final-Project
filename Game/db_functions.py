@@ -1,14 +1,14 @@
+# NOTE: I attempted to use single quotes when possible, but had to use double quotes when a single quote character had to be included in the SQL query/action
+
 import sqlite3
 
-# note: I attempted to use single quotes when possible, but had to use double quotes when a single quote character had to be included in the SQL query/action
-
-# inserts data for a new player or adds to the score for an already existing user (void)
+# inserts data for a new player or updates to the score for an already existing user (void)
 def insertData (playerName, playerScore):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
        
        if checkExists(playerName):
-              updateScoreForUser(playerName, playerScore)
+              setScoreForUser(playerName, playerScore)
        else:
               cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore) VALUES (?, ?)', (playerName, playerScore))
        

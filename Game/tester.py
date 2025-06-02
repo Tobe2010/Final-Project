@@ -1,5 +1,5 @@
 import db_functions as db
-import db_init
+import db_init as init
 import sqlite3
 
-db.insertData('Gavin', 100)
+db.queryScoreForUser('Elijah')
