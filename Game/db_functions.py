@@ -1,17 +1,21 @@
 import sqlite3
 
+# note: I attempted to use single quotes when possible, but had to use double quotes when a single quote character had to be included in the SQL query/action
+
+# inserts data for a new player or adds to the score for an already existing user (void)
 def insertData (playerName, playerScore):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
        
        if checkExists(playerName):
-              cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore) VALUES (?, ?)', (playerName, playerScore))
-       else:
               updateScoreForUser(playerName, playerScore)
+       else:
+              cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore) VALUES (?, ?)', (playerName, playerScore))
        
        conn.commit()
        conn.close()
       
+# prints every row in the database (void)
 def queryDB ():
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -22,6 +26,7 @@ def queryDB ():
 
        conn.close()
        
+# prints the score for a specific username (int)
 def queryScoreForUser (playerName):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -33,7 +38,8 @@ def queryScoreForUser (playerName):
        conn.close()
        
        return i[0]
-       
+
+# adds to the score for a specific username (void)
 def updateScoreForUser (playerName, newScore):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -42,7 +48,18 @@ def updateScoreForUser (playerName, newScore):
        
        conn.commit()
        conn.close()
+
+# sets the score for a specific username (void)
+def setScoreForUser (playerName, newScore):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
        
+       cursor.execute('UPDATE SCORE_TABLE SET playerScore = ' + str(newScore) + " WHERE playerName = '" + playerName + "'")
+       
+       conn.commit()
+       conn.close()
+       
+# checks if a user exists in the database (boolean)
 def checkExists(playerName):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -56,4 +73,4 @@ def checkExists(playerName):
        conn.commit()
        conn.close()
        
-       return (i == 0)
+       return (i != 0)
