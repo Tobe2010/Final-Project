@@ -1,7 +1,8 @@
 import pygame
 import pymunk
 import random
-import db_functions
+
+extra_lives = True
 
 #Initiate pygame and show the window
 pygame.init()
@@ -117,7 +118,7 @@ def game():
         if counter % 50 == 0:
             sc += 1
         
-        #print(shape.shapes_collide(pilars.shape).points)
+        print(shape.shapes_collide(pilars.shape).points)
         
         #if len(shape.shapes_collide(pilars.shape).points) > 0:
         #    return sc
