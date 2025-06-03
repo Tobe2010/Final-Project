@@ -3,6 +3,7 @@
 import db_functions as db
 import time
 
+# buys one extra life for the user
 def buyALife(name):
     if db.queryScoreForUser(name) >= 100:
         db.updateScoreForUser(name, -100)
@@ -13,6 +14,7 @@ def buyALife(name):
         print('You don\'t have enough points to complete this purchase!')
         return
 
+# user shop function
 def shop(name):
     print('Would you like to purchase an extra life for 100 points? (y/n)')
     userWantsLife = input()

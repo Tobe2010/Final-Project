@@ -26,7 +26,7 @@ def queryDB():
 
        conn.close()
        
-# prints the score for a specific username (int)
+# returns the score for a specific username (int)
 def queryScoreForUser(playerName):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -75,6 +75,7 @@ def checkExists(playerName):
        
        return (i != 0)
 
+# returns the number of extra lives for a specific username (int)
 def queryLivesForUser(playerName):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -87,6 +88,7 @@ def queryLivesForUser(playerName):
        
        return i[0]
 
+# manually sets the number of lives for a user (primarily used in testing) (void)
 def setLivesForUser(playerName, playerLives):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -96,6 +98,7 @@ def setLivesForUser(playerName, playerLives):
        conn.commit()
        conn.close()
 
+# adds one extra life to a user's saved data (void)
 def addLivesForUser(playerName):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
@@ -105,6 +108,7 @@ def addLivesForUser(playerName):
        conn.commit()
        conn.close()
 
+# subtracts one extra life from a user's saved data (void)
 def subtractLifeForUser(playerName):
        conn = sqlite3.connect('game_database.db')
        cursor = conn.cursor()
