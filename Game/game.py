@@ -1,10 +1,8 @@
 import pygame
 import pymunk
 import random
-import db_functions as db
-import game_start
 
-name = game_start.gameInit()
+extra_lives = True
 
 #Initiate pygame and show the window
 pygame.init()
@@ -25,7 +23,8 @@ body.position = 200, 400
 shape = pymunk.Circle(body, 20)
 shape.collision_type = 1
 
-space.add(body, shape)         
+space.add(body, shape)
+         
 
 
 class Pilars():
@@ -82,6 +81,7 @@ class Pilars():
         if self.body.position[0] < -70:
             self.set_new_position(900)
             
+            
 def on_collide(arbiter, space, data):
     return True
 
@@ -124,7 +124,7 @@ def game():
         if counter % 50 == 0:
             sc += 1
         
-        #print(shape.shapes_collide(pilars.shape).points)
+        print(shape.shapes_collide(pilars.shape).points)
         
         #if len(shape.shapes_collide(pilars.shape).points) > 0:
         #    return sc
@@ -149,5 +149,5 @@ def game():
 
 # Enter x into the table under the "score" column
 x = game()
-print(x)
-db.insertData(name, x)
+
+#db_functions.insertData('Tester', x)
