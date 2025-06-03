@@ -3,4 +3,4 @@ import db_init as init
 import sqlite3
 import game_start
 
-db.updateScoreForUser('Gavin', 10)
+db.addLivesForUser('Elijah')

@@ -1,10 +1,11 @@
 import pygame
 import pymunk
 import random
-import db_functions
+import db_functions as db
 import math
+import game_start
 
-extra_lives = True
+name = game_start.gameInit()
 
 #Initiate pygame and show the window
 pygame.init()
@@ -134,13 +135,19 @@ coin_three = Coin(1150, space, display)
 def game():
     sc = 0
     counter = 0
+
+    red = db.userRed(name)
+    green = db.userGreen(name)
+    blue = db.userBlue(name)
+
+    multiplier = db.getUserMultiply(name)
     
     
     while True:
                 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return sc
+                return sc * multiplier
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -159,15 +166,19 @@ def game():
         coin.draw()
         coin_two.draw()
         coin_three.draw()
+
+        counter += 1
+        if counter % 50 == 0:
+            sc += 1
         
         if pilars.has_collided(body.position, 20):
-            return sc
+            return sc * multiplier
         
         if pilars_two.has_collided(body.position, 20):
-            return sc
+            return sc * multiplier
         
         if pilars_three.has_collided(body.position, 20):
-            return sc
+            return sc * multiplier
         
         
         if coin.has_collided(body.position, 20):
@@ -184,7 +195,7 @@ def game():
         
         
         if body.position[1] > 780 or body.position[1] < 20:
-            return sc
+            return sc * multiplier
         
               
         pygame.display.flip()
@@ -195,4 +206,4 @@ def game():
 # Enter x into the table under the "score" column
 x = game()
 
-#db_functions.insertData('Tester', x)
+db.insertData(name, x)
