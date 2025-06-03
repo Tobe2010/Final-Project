@@ -1,10 +1,11 @@
 import pygame
 import pymunk
 import random
-import db_functions
+import db_functions as db
+import game_start
 import math
 
-extra_lives = True
+name = game_start.gameInit()
 
 #Initiate pygame and show the window
 pygame.init()
@@ -153,15 +154,22 @@ coin_three = Coin(1150, space, display)
 
 #Make the game function return the score        
 def game():
-    sc = 0    
-    
+    sc = 0
+    counter = 0
+
+    red = db.userRed(name)
+    green = db.userGreen(name)
+    blue = db.userBlue(name)
+
+    multiplier = db.getUserMultiply(name)
+
     #Game loop
     while True:
                 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 #Will break when the score's returned
-                return sc
+                return sc * multiplier
             
             #Jump on space
             if event.type == pygame.KEYDOWN:
@@ -174,7 +182,7 @@ def game():
         display.fill((255, 255, 255))
         
         #Draw the ball
-        pygame.draw.circle(display, (255, 0, 0), (body.position), 20)
+        pygame.draw.circle(display, (red, green, blue), (body.position), 20)
         
         #Draw the pilars
         pilars.draw()
@@ -185,34 +193,38 @@ def game():
         coin.draw()
         coin_two.draw()
         coin_three.draw()
+
+        counter += 1
+        if counter % 50 == 0:
+            sc += 1
         
         #End the game if any of the pilars collide with the ball
         if pilars.has_collided(body.position, 20):
-            return sc
+            return sc * multiplier
         
         if pilars_two.has_collided(body.position, 20):
-            return sc
+            return sc * multiplier
         
         if pilars_three.has_collided(body.position, 20):
-            return sc
+            return sc * multiplier
         
         
         # Add a point to the score and make the coin disappear upon colliding with the ball
         if coin.has_collided(body.position, 20) and coin.isDeleted and coin.isDeleted == False:
-            sc += 1
+            sc += 5
             coin.set_new_position(coin.body.position[0] + 800)
         
         if coin_two.has_collided(body.position, 20) and coin_two.isDeleted == False:
-            sc += 1
+            sc += 5
             coin_two.set_new_position(coin_two.body.position[0] + 800)
             
         if coin_three.has_collided(body.position, 20) and coin_three.isDeleted == False:
-            sc += 1
+            sc += 5
             coin_three.set_new_position(coin_three.body.position[0] + 800)
             
         
         if body.position[1] > 780 or body.position[1] < 20:
-            return sc
+            return sc * multiplier
         
               
         pygame.display.flip()
@@ -223,4 +235,4 @@ def game():
 # Enter x into the table under the "score" column
 x = game()
 
-#db_functions.insertData('Tester', x)
+db.insertData(name, x)
