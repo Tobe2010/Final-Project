@@ -41,7 +41,8 @@ def gameInit():
         time.sleep(3)
         shopOpened(name)
     else:
-        print('It appears that this is your first time playing the game, welcome!')
+        print('\nIt appears that this is your first time playing the game, welcome!\n')
+        db.insertData(name, 0)
         time.sleep(4)
 
     startedGame()

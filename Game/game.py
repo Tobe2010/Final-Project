@@ -93,12 +93,18 @@ pilars_three = Pilars(1000, space, display)
 def game():
     sc = 0
     counter = 0
+
+    red = db.userRed(name)
+    green = db.userGreen(name)
+    blue = db.userBlue(name)
+
+    scoreMultiplier = db.getUserMultiply(name)
     
     while True:
                 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return sc
+                return sc * scoreMultiplier
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -108,7 +114,7 @@ def game():
                 
         display.fill((255, 255, 255))
         
-        pygame.draw.circle(display, (255, 0, 0), (body.position), 20)
+        pygame.draw.circle(display, (red, green, blue), (body.position), 20)
         
         pilars.draw()
         pilars_two.draw()
@@ -133,7 +139,7 @@ def game():
         #    return sc                    
         
         if body.position[1] > 780 or body.position[1] < 20 and db.queryLivesForUser(name) <= 0:
-            return sc
+            return sc * scoreMultiplier
         
               
         pygame.display.flip()

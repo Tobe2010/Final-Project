@@ -10,7 +10,7 @@ def insertData(playerName, playerScore):
        if checkExists(playerName):
               updateScoreForUser(playerName, playerScore)
        else:
-              cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore, playerLives) VALUES (?, ?, ?)', (playerName, playerScore, 0))
+              cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore, playerLives, red, green, blue, scMultiply) VALUES (?, ?, ?, ?, ?, ?, ?)', (playerName, playerScore, 0, 255, 0, 0, 1))
        
        conn.commit()
        conn.close()
@@ -119,3 +119,94 @@ def subtractLifeForUser(playerName):
        conn.close()
        if queryLivesForUser(playerName) < 0:
               setLivesForUser(playerName, 0)
+
+# sets red value for user
+def setRed(playerName, redValue):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute('UPDATE SCORE_TABLE SET red = ' + str(redValue) + " WHERE playerName = '" + playerName + "'")
+
+       conn.commit()
+       conn.close()
+# sets green value for user
+def setGreen(playerName, greenValue):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute('UPDATE SCORE_TABLE SET green = ' + str(greenValue) + " WHERE playerName = '" + playerName + "'")
+
+       conn.commit()
+       conn.close()
+
+# sets blue value for user
+def setBlue(playerName, blueValue):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute('UPDATE SCORE_TABLE SET blue = ' + str(blueValue) + " WHERE playerName = '" + playerName + "'")
+
+       conn.commit()
+       conn.close()
+
+# returns red value for user
+def userRed(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute("SELECT red FROM SCORE_TABLE WHERE playerName = '" + playerName + "'")
+       
+       i = cursor.fetchone()
+       
+       conn.close()
+       
+       return i[0]
+
+# returns green value for user
+def userGreen(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute("SELECT green FROM SCORE_TABLE WHERE playerName = '" + playerName + "'")
+       
+       i = cursor.fetchone()
+       
+       conn.close()
+       
+       return i[0]
+
+# returns blue value for user
+def userBlue(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute("SELECT blue FROM SCORE_TABLE WHERE playerName = '" + playerName + "'")
+       
+       i = cursor.fetchone()
+       
+       conn.close()
+       
+       return i[0]
+
+# returns score multiplier for user
+def getUserMultiply(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute("SELECT scMultiply FROM SCORE_TABLE WHERE playerName = '" + playerName + "'")
+       
+       i = cursor.fetchone()
+       
+       conn.close()
+       
+       return i[0]
+
+# multiplies the user's point multiplier by 2
+def upgradeUserMultiply(playerName):
+       conn = sqlite3.connect('game_database.db')
+       cursor = conn.cursor()
+       
+       cursor.execute('UPDATE SCORE_TABLE SET scMultiply = ' + str(getUserMultiply(playerName) * 2) + " WHERE playerName = '" + playerName + "'")
+
+       conn.commit()
+       conn.close()
