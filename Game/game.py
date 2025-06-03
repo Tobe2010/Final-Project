@@ -1,6 +1,8 @@
 import pygame
 import pymunk
 import random
+import db_functions
+import math
 
 extra_lives = True
 
@@ -14,6 +16,7 @@ space = pymunk.Space()
 space.gravity = 0, 900
 
 
+
 #Frame count handling
 FPS = 80
 
@@ -21,8 +24,6 @@ FPS = 80
 body = pymunk.Body(1, 1111111)
 body.position = 200, 400
 shape = pymunk.Circle(body, 20)
-shape.collision_type = 1
-
 space.add(body, shape)
          
 
@@ -71,40 +72,75 @@ class Pilars():
         space.add(self.body_second, self.shape_second)
         
     def draw(self):
-        rect_top = (self.body.position[0] - 25, 0, 70, self.length)
-        rect_bottom = (self.body_second.position[0] - 25, self.length + 100, 70, self.length_second)
+        self.rect_top = (self.body.position[0] - 25, 0, 70, self.length)
+        self.rect_bottom = (self.body_second.position[0] - 25, self.length + 100, 70, self.length_second)
         
-        pygame.draw.rect(self.display, (0, 0, 255), rect_top)
-        pygame.draw.rect(self.display, (0, 0, 255), rect_bottom)
+        pygame.draw.rect(self.display, (0, 0, 255), self.rect_top)
+        pygame.draw.rect(self.display, (0, 0, 255), self.rect_bottom)
         
         #Redo the cycle
         if self.body.position[0] < -70:
             self.set_new_position(900)
             
+    def has_collided(self, pos, radius):
+        return (self.body.position[0] - 35) == (pos[0] + radius) and (pos[1] <= self.length or pos[1] >= self.length + 100)
+    
+    
+class Coin():
+    def __init__(self, x, space, display):
+        self.x = x
+        self.display = display
+        self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
+        self.body.position = self.x, random.randint(15, 785)
+        self.body.velocity = -100, 0
+        self.shape = pymunk.Circle(self.body, 20)
+        
+        space.add(self.body, self.shape)
+        
+    def set_new_position(self, x):
+        self.x = x
+        self.display = display
+        self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
+        self.body.position = self.x, random.randint(15, 785)
+        self.body.position = -100, 0
+        self.shape = pymunk.Circle(self.body, 20)
+        
+        space.add(self.body, self.shape)
+        
+    def has_collided(self, pos, radius):
+        x_distance = pos[0] - self.body.position[0]
+        y_distance = pos[1] - self.body.position[1]
+        
+        center_distance = math.sqrt(x_distance ** 2 + y_distance ** 2)
+        
+        return center_distance < radius + 20
+    
+    def draw(self):
+        pygame.draw.circle(self.display, (255, 255, 0), self.body.position, 10)
+                
+        if self.body.position[0] < -20:
+            self.set_new_position(900)           
+    
             
-def on_collide(arbiter, space, data):
-    return True
-
         
 pilars = Pilars(400, space, display)
 pilars_two = Pilars(700, space, display)
 pilars_three = Pilars(1000, space, display)
+
+coin = Coin(650, space, display)
+coin_two = Coin(850, space, display)
+coin_three = Coin(1150, space, display)
         
 def game():
     sc = 0
     counter = 0
-
-    red = db.userRed(name)
-    green = db.userGreen(name)
-    blue = db.userBlue(name)
-
-    scoreMultiplier = db.getUserMultiply(name)
+    
     
     while True:
                 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return sc * scoreMultiplier
+                return sc
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -114,32 +150,41 @@ def game():
                 
         display.fill((255, 255, 255))
         
-        pygame.draw.circle(display, (red, green, blue), (body.position), 20)
+        pygame.draw.circle(display, (255, 0, 0), (body.position), 20)
         
         pilars.draw()
         pilars_two.draw()
         pilars_three.draw()
         
-        counter += 1
-        if counter % 50 == 0:
+        coin.draw()
+        coin_two.draw()
+        coin_three.draw()
+        
+        if pilars.has_collided(body.position, 20):
+            return sc
+        
+        if pilars_two.has_collided(body.position, 20):
+            return sc
+        
+        if pilars_three.has_collided(body.position, 20):
+            return sc
+        
+        
+        if coin.has_collided(body.position, 20):
             sc += 1
+            space.remove(coin.body, coin.shape)
+            
+        if coin_two.has_collided(body.position, 20):
+            sc += 1
+            space.remove(coin_two.body, coin_two.shape)
+            
+        if coin_three.has_collided(body.position, 20):
+            sc += 1
+            space.remove(coin_three.body, coin_three.shape)
         
-        print(shape.shapes_collide(pilars.shape).points)
         
-        #if len(shape.shapes_collide(pilars.shape).points) > 0:
-        #    return sc
-        
-        #if len(shape.shapes_collide(pilars_two.shape).points) > 0:
-         #   return sc
-        
-        #if len(shape.shapes_collide(pilars_three.shape).points) > 0:
-        #    return sc
-        
-        #if len(shape.shapes_collide(pilars_four.shape).points) > 0:
-        #    return sc                    
-        
-        if body.position[1] > 780 or body.position[1] < 20 and db.queryLivesForUser(name) <= 0:
-            return sc * scoreMultiplier
+        if body.position[1] > 780 or body.position[1] < 20:
+            return sc
         
               
         pygame.display.flip()
