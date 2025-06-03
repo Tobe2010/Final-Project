@@ -1,7 +1,10 @@
 import pygame
 import pymunk
 import random
-import db_functions
+import db_functions as db
+import game_start
+
+name = game_start.gameInit()
 
 #Initiate pygame and show the window
 pygame.init()
@@ -89,6 +92,7 @@ pilars_three = Pilars(1000, space, display)
         
 def game():
     sc = 0
+    counter = 0
     
     while True:
                 
@@ -110,6 +114,9 @@ def game():
         pilars_two.draw()
         pilars_three.draw()
         
+        counter += 1
+        if counter % 50 == 0:
+            sc += 1
         
         #print(shape.shapes_collide(pilars.shape).points)
         
@@ -125,16 +132,16 @@ def game():
         #if len(shape.shapes_collide(pilars_four.shape).points) > 0:
         #    return sc                    
         
-        if body.position[1] > 780 or body.position[1] < 20:
+        if body.position[1] > 780 or body.position[1] < 20 and db.queryLivesForUser(name) <= 0:
             return sc
         
               
         pygame.display.flip()
         space.step(1/FPS)
-        clock.tick(FPS)        
+        clock.tick(FPS)
         
 
 # Enter x into the table under the "score" column
 x = game()
-
-#db_functions.insertData('Tester', x)
+print(x)
+db.insertData(name, x)

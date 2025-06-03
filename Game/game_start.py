@@ -37,7 +37,7 @@ def gameInit():
     name = input()
 
     if db.checkExists(name):
-        print('\nWelcome back, ' + name + '! Your current score is ' + str(db.queryScoreForUser(name)) + '.')
+        print('\nWelcome back, ' + name + '! Your current score is ' + str(db.queryScoreForUser(name)) + '.\n')
         time.sleep(3)
         shopOpened(name)
     else:

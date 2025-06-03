@@ -8,7 +8,7 @@ def insertData(playerName, playerScore):
        cursor = conn.cursor()
        
        if checkExists(playerName):
-              setScoreForUser(playerName, playerScore)
+              updateScoreForUser(playerName, playerScore)
        else:
               cursor.execute('INSERT INTO SCORE_TABLE (playerName, playerScore, playerLives) VALUES (?, ?, ?)', (playerName, playerScore, 0))
        
