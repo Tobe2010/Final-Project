@@ -3,6 +3,7 @@ import pymunk
 import random
 import db_functions
 
+
 #Initiate pygame and show the window
 pygame.init()
 display = pygame.display.set_mode((800, 800))
@@ -22,7 +23,8 @@ body.position = 200, 400
 shape = pymunk.Circle(body, 20)
 shape.collision_type = 1
 
-space.add(body, shape)         
+space.add(body, shape)
+         
 
 
 class Pilars():
@@ -78,6 +80,7 @@ class Pilars():
         #Redo the cycle
         if self.body.position[0] < -70:
             self.set_new_position(900)
+            
             
 def on_collide(arbiter, space, data):
     return True
@@ -137,4 +140,4 @@ def game():
 # Enter x into the table under the "score" column
 x = game()
 
-#db_functions.insertData('Tester', x)
+db_functions.insertData('SCORE_TABLE', x)
