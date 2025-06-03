@@ -1,11 +1,10 @@
 import pygame
 import pymunk
 import random
-import db_functions as db
+import db_functions
 import math
-import game_start
 
-name = game_start.gameInit()
+extra_lives = True
 
 #Initiate pygame and show the window
 pygame.init()
@@ -17,11 +16,11 @@ space = pymunk.Space()
 space.gravity = 0, 900
 
 
-
 #Frame count handling
 FPS = 80
 
 
+#Ball pymunk
 body = pymunk.Body(1, 1111111)
 body.position = 200, 400
 shape = pymunk.Circle(body, 20)
@@ -84,118 +83,136 @@ class Pilars():
             self.set_new_position(900)
             
     def has_collided(self, pos, radius):
+        #Has collided with the ball
         return (self.body.position[0] - 35) == (pos[0] + radius) and (pos[1] <= self.length or pos[1] >= self.length + 100)
     
     
 class Coin():
     def __init__(self, x, space, display):
+        self.isDeleted = False
         self.x = x
         self.display = display
         self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body.position = self.x, random.randint(15, 785)
         self.body.velocity = -100, 0
         self.shape = pymunk.Circle(self.body, 20)
-        
+        self.shape.sensor = True
+    
         space.add(self.body, self.shape)
         
     def set_new_position(self, x):
+        self.isDeleted = False
         self.x = x
-        self.display = display
+        self.shape.density = 0
         self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body.position = self.x, random.randint(15, 785)
         self.body.position = -100, 0
         self.shape = pymunk.Circle(self.body, 20)
+        self.shape.elasticity = 0
+        self.display = display
+        self.shape.sensor = True
         
         space.add(self.body, self.shape)
         
     def has_collided(self, pos, radius):
+        #Has collided with the ball
+        
         x_distance = pos[0] - self.body.position[0]
         y_distance = pos[1] - self.body.position[1]
         
         center_distance = math.sqrt(x_distance ** 2 + y_distance ** 2)
         
-        return center_distance < radius + 20
+        if center_distance < radius + 20:
+            self.isDeleted = True
+            return True
+        
+        else:
+            return False
+
     
     def draw(self):
-        pygame.draw.circle(self.display, (255, 255, 0), self.body.position, 10)
-                
+        if self.isDeleted == False:
+            pygame.draw.circle(self.display, (255, 255, 0), self.body.position, 10)
+        
+        #Redo Cycle        
         if self.body.position[0] < -20:
-            self.set_new_position(900)           
+            self.set_new_position(900)
     
             
-        
+
+#Make three pilars     
 pilars = Pilars(400, space, display)
 pilars_two = Pilars(700, space, display)
 pilars_three = Pilars(1000, space, display)
 
+#Three coins to go in between the pilars
 coin = Coin(650, space, display)
 coin_two = Coin(850, space, display)
 coin_three = Coin(1150, space, display)
-        
+
+
+#Make the game function return the score        
 def game():
-    sc = 0
-    counter = 0
-
-    red = db.userRed(name)
-    green = db.userGreen(name)
-    blue = db.userBlue(name)
-
-    multiplier = db.getUserMultiply(name)
+    sc = 0    
     
-    
+    #Game loop
     while True:
                 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return sc * multiplier
+                #Will break when the score's returned
+                return sc
             
+            #Jump on space
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     body.apply_impulse_at_local_point((0, -400))
                     
 
-                
+        
+        #Background       
         display.fill((255, 255, 255))
         
+        #Draw the ball
         pygame.draw.circle(display, (255, 0, 0), (body.position), 20)
         
+        #Draw the pilars
         pilars.draw()
         pilars_two.draw()
         pilars_three.draw()
         
+        #Draw the coins
         coin.draw()
         coin_two.draw()
         coin_three.draw()
-
-        counter += 1
-        if counter % 50 == 0:
-            sc += 1
         
+        #End the game if any of the pilars collide with the ball
         if pilars.has_collided(body.position, 20):
-            return sc * multiplier
+            return sc
         
         if pilars_two.has_collided(body.position, 20):
-            return sc * multiplier
+            return sc
         
         if pilars_three.has_collided(body.position, 20):
-            return sc * multiplier
+            return sc
         
         
-        if coin.has_collided(body.position, 20):
+        # Add a point to the score and make the coin disappear upon colliding with the ball
+        if coin.has_collided(body.position, 20) and coin.isDeleted and coin.isDeleted == False:
             sc += 1
-            space.remove(coin.body, coin.shape)
+            coin.set_new_position(coin.body.position[0] + 800)
+        
+        if coin_two.has_collided(body.position, 20) and coin_two.isDeleted == False:
+            sc += 1
+            coin_two.set_new_position(coin_two.body.position[0] + 800)
             
-        if coin_two.has_collided(body.position, 20):
+        if coin_three.has_collided(body.position, 20) and coin_three.isDeleted == False:
             sc += 1
-            space.remove(coin_two.body, coin_two.shape)
+            coin_three.set_new_position(coin_three.body.position[0] + 800)
             
-        if coin_three.has_collided(body.position, 20):
-            sc += 1
-            space.remove(coin_three.body, coin_three.shape)
-        
         
         if body.position[1] > 780 or body.position[1] < 20:
-            return sc * multiplier
+            return sc
         
               
         pygame.display.flip()
@@ -206,4 +223,4 @@ def game():
 # Enter x into the table under the "score" column
 x = game()
 
-db.insertData(name, x)
+#db_functions.insertData('Tester', x)
