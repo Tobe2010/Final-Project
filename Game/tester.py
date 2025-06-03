@@ -1,5 +1,6 @@
 import db_functions as db
-import db_init
+import db_init as init
 import sqlite3
+import game_start
 
-db.insertData('Gavin', 100)
+db.addLivesForUser('Elijah')

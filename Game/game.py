@@ -3,7 +3,6 @@ import pymunk
 import random
 import db_functions
 
-
 #Initiate pygame and show the window
 pygame.init()
 display = pygame.display.set_mode((800, 800))
@@ -92,6 +91,7 @@ pilars_three = Pilars(1000, space, display)
         
 def game():
     sc = 0
+    counter = 0
     
     while True:
                 
@@ -113,6 +113,9 @@ def game():
         pilars_two.draw()
         pilars_three.draw()
         
+        counter += 1
+        if counter % 50 == 0:
+            sc += 1
         
         #print(shape.shapes_collide(pilars.shape).points)
         
@@ -128,16 +131,16 @@ def game():
         #if len(shape.shapes_collide(pilars_four.shape).points) > 0:
         #    return sc                    
         
-        if body.position[1] > 780 or body.position[1] < 20:
+        if body.position[1] > 780 or body.position[1] < 20 and db.queryLivesForUser(name) <= 0:
             return sc
         
               
         pygame.display.flip()
         space.step(1/FPS)
-        clock.tick(FPS)        
+        clock.tick(FPS)
         
 
 # Enter x into the table under the "score" column
 x = game()
 
-db_functions.insertData('SCORE_TABLE', x)
+#db_functions.insertData('Tester', x)
