@@ -1,0 +1,9 @@
+Before starting the game, be sure to install the pymunk and pygame packages to the project
+
+Next, navigate to game.py and run the file - navigate to the console and interact with the commands, and then the game will start.
+
+To play the game, press SPACE to propel the ball upwards, making sure to avoid the blue pillars throughout the game.
+
+One point will be added to your score every so often for surviving, and five points will be added to your score if you collide with a coin (yellow ball)
+
+Survive in the game as long as possible, when the game ends your data will be stored and the game will quit.

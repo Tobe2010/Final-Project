@@ -18,3 +18,5 @@ def init_db():
     cursor.execute(table)
 
     conn.close()
+
+init_db()

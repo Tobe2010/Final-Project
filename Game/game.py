@@ -33,41 +33,43 @@ class Pilars():
     def __init__(self, x, space, display):
         self.x = x
         self.display = display
+        self.space = space
         
         self.length = random.randint(100, 670)
         self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body.position = self.x, self.length/2
         self.shape = pymunk.Poly.create_box(self.body, (70, self.length))
-        self.shape.collision_type = 2
         self.body.velocity = -100, 0
+        self.shape.sensor = True
         
         self.length_second = 800 - (self.length + 100)
         self.body_second = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body_second.position = self.x, self.length + 100 + self.length_second/2
         self.shape_second = pymunk.Poly.create_box(self.body_second, (70, self.length_second))
-        self.shape_second.collision_type = 2
         self.body_second.velocity = -100, 0
+        self.shape_second.sensor = True
         
         
-        space.add(self.body, self.shape)
-        space.add(self.body_second, self.shape_second)
+        self.space.add(self.body, self.shape)
+        self.space.add(self.body_second, self.shape_second)
         
     def set_new_position(self, x):
         self.x = x
         
+        self.isColliding = False
         self.length = random.randint(100, 670)
         self.body = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body.position = self.x, self.length/2
         self.shape = pymunk.Poly.create_box(self.body, (70, self.length))
-        self.shape.collision_type = 2
         self.body.velocity = -100, 0
+        self.shape.sensor = True
         
         self.length_second = 800 - (self.length + 100)
         self.body_second = pymunk.Body(0, 0, body_type=pymunk.Body.KINEMATIC)
         self.body_second.position = self.x, self.length + 100 + self.length_second/2
         self.shape_second = pymunk.Poly.create_box(self.body_second, (70, self.length_second))
-        self.shape_second.collision_type = 2
         self.body_second.velocity = -100, 0
+        self.shape_second.sensor = True
         
         space.add(self.body, self.shape)
         space.add(self.body_second, self.shape_second)
@@ -83,9 +85,11 @@ class Pilars():
         if self.body.position[0] < -70:
             self.set_new_position(900)
             
-    def has_collided(self, pos, radius):
+    def has_collided(self, pos, radius, x):
         #Has collided with the ball
-        return (self.body.position[0] - 35) == (pos[0] + radius) and (pos[1] <= self.length or pos[1] >= self.length + 100)
+        if (self.body.position[0] - 35) == (pos[0] + radius) and (pos[1] <= self.length or pos[1] >= self.length + 100):
+            self.set_new_position(x)
+            return True
     
     
 class Coin():
@@ -199,13 +203,15 @@ def game():
             sc += 1
         
         #End the game if any of the pilars collide with the ball
-        if pilars.has_collided(body.position, 20):
+        if pilars.has_collided(body.position, 20, 0):
             return sc * multiplier
         
-        if pilars_two.has_collided(body.position, 20):
+
+        if pilars_two.has_collided(body.position, 20, 0):
             return sc * multiplier
         
-        if pilars_three.has_collided(body.position, 20):
+        
+        if pilars_three.has_collided(body.position, 20, 0):
             return sc * multiplier
         
         

@@ -54,10 +54,14 @@ def upgradeMultiplier(name):
 
 # user shop function
 def shop(name):
+
+    '''
+    THE COLLISION CHECKS IN game.py DID NOT ALLOW FOR THE LIVES TO WORK
     print('Would you like to purchase an extra life for 100 points? (y/n)')
     userWantsLife = input()
     if userWantsLife == 'y' or userWantsLife == 'Y':
         buyALife(name)
+    '''
 
     print('Would you like to change the ball color for 10 points? (y/n)')
     userWantsColor = input()
