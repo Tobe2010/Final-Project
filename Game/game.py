@@ -96,8 +96,7 @@ class Coin():
         self.body.position = self.x, random.randint(15, 785)
         self.body.velocity = -100, 0
         self.shape = pymunk.Circle(self.body, 20)
-        self.shape.density = 0
-        self.shape.elasticity = 0
+        self.shape.sensor = True
     
         space.add(self.body, self.shape)
         
@@ -111,6 +110,7 @@ class Coin():
         self.shape = pymunk.Circle(self.body, 20)
         self.shape.elasticity = 0
         self.display = display
+        self.shape.sensor = True
         
         space.add(self.body, self.shape)
         
