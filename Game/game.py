@@ -90,6 +90,12 @@ class Pilars():
         if (self.body.position[0] - 35) == (pos[0] + radius) and (pos[1] <= self.length or pos[1] >= self.length + 100):
             self.set_new_position(x)
             return True
+        
+        elif pos[0] >= self.body.position[0] - 35 and pos[0] <= self.body.position[0] + 35 and (pos[1] - 20 == self.length or pos[1] + 20 == self.length + 100):
+            return True
+        
+        else:
+            return False
     
     
 class Coin():
